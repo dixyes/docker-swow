@@ -1,0 +1,31 @@
+name: Update git ref in Dockerfiles
+
+on:
+  workflow_dispatch:
+    inputs:
+      swow_ref:
+        description: 'Swow git ref to build'
+        required: true
+        default: 'develop'
+
+jobs:
+  update:
+    name: Update git ref in Dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare git repo
+        run: |
+          git clone --single-branch --depth 1 -b build ${{ github.repository }} docker-swow
+
+      - name: Replace "develop" in Dockerfiles
+        working-directory: docker-swow
+        run: |
+          git checkout master dockerfiles/*/*/Dockerfile
+          sed -i 's|develop|${{ github.event.inputs.swow_ref }}|g' dockerfiles/*/*/Dockerfile
+
+      - name: Re-commit changes
+        working-directory: docker-swow
+        run: |
+          git add -A
+          git commit -m "Update Swow to libcat/libcat@${{ github.event.inputs.swow_ref }}"
+          git push
