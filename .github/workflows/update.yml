@@ -13,20 +13,19 @@ jobs:
     name: Update git ref in Dockerfiles
     runs-on: ubuntu-latest
     steps:
-      - name: Prepare git repo
-        run: |
-          git clone --single-branch --depth 1 -b master https://github.com/${{ github.repository }} docker-swow
-          cd docker-swow
-          git checkout -b build
+      - name: Fetch git repository
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       - name: Replace "develop" in Dockerfiles
-        working-directory: docker-swow
         run: |
+          git checkout -b build
           git checkout master .
           sed -i 's|develop|${{ github.event.inputs.swow_ref }}|g' dockerfiles/*/*/Dockerfile
 
       - name: Re-commit changes
-        working-directory: docker-swow
         run: |
           git add -A
           # todo: maybe we should use real email and name?
@@ -37,5 +36,6 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
+
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: build
