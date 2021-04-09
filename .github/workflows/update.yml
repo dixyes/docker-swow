@@ -33,4 +33,9 @@ jobs:
           git config --global user.email "none@none.net"
           git config --global user.name "actions-bot"
           git commit -m "Update Swow to libcat/libcat@${{ github.event.inputs.swow_ref }}"
-          git push -u origin build
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: build
