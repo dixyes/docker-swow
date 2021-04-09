@@ -15,13 +15,14 @@ jobs:
     steps:
       - name: Prepare git repo
         run: |
-          git clone --single-branch --depth 1 -b build https://github.com/${{ github.repository }} docker-swow
-          git --git-dir=docker-swow/.git fetch origin master
+          git clone --single-branch --depth 1 -b master https://github.com/${{ github.repository }} docker-swow
+          cd docker-swow
+          git checkout -b build
 
       - name: Replace "develop" in Dockerfiles
         working-directory: docker-swow
         run: |
-          git checkout origin/master dockerfiles/*/*/Dockerfile
+          git checkout master dockerfiles/*/*/Dockerfile
           sed -i 's|develop|${{ github.event.inputs.swow_ref }}|g' dockerfiles/*/*/Dockerfile
 
       - name: Re-commit changes
