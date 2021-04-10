@@ -24,6 +24,8 @@ jobs:
 
       - name: Replace "develop" in Dockerfiles
         run: |
+          git config --global user.email "none@none.net"
+          git config --global user.name "actions-bot"
           git checkout -b build
           git pull origin build --rebase
           git checkout master .
@@ -33,8 +35,6 @@ jobs:
         run: |
           git add -A
           # todo: maybe we should use real email and name?
-          git config --global user.email "none@none.net"
-          git config --global user.name "actions-bot"
           git commit -m "Update Swow to libcat/libcat@${{ github.event.inputs.swow_rev }}"
 
       - name: Push changes
