@@ -4,9 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       swow_ref:
-        description: 'Swow git ref to build'
+        description: 'Swow git ref used in alias'
         required: true
         default: 'develop'
+      swow_rev:
+        description: 'Swow git hash to build'
+        required: true
 
 jobs:
   update:
@@ -23,7 +26,7 @@ jobs:
         run: |
           git checkout -b build
           git checkout master .
-          sed -i 's|develop|${{ github.event.inputs.swow_ref }}|g' dockerfiles/*/*/Dockerfile
+          sed -i 's|develop|${{ github.event.inputs.swow_rev }}|g' dockerfiles/*/*/Dockerfile
 
       - name: Re-commit changes
         run: |
@@ -31,7 +34,7 @@ jobs:
           # todo: maybe we should use real email and name?
           git config --global user.email "none@none.net"
           git config --global user.name "actions-bot"
-          git commit -m "Update Swow to libcat/libcat@${{ github.event.inputs.swow_ref }}"
+          git commit -m "Update Swow to libcat/libcat@${{ github.event.inputs.swow_rev }}"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
