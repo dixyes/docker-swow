@@ -25,6 +25,7 @@ jobs:
       - name: Replace "develop" in Dockerfiles
         run: |
           git checkout -b build
+          git pull --ff-only
           git checkout master .
           sed -i 's|develop|${{ github.event.inputs.swow_rev }}|g' dockerfiles/*/*/Dockerfile
 
